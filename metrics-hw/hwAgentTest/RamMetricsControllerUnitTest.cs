@@ -2,30 +2,57 @@ using hwAgent.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using Xunit;
+using Moq;
+using hwAgent.DAL;
+using hwAgent.Models;
+using Microsoft.Extensions.Logging;
 
 namespace hwAgentTest
 {
     public class RamMetricsControllerUnitTests
     {
         private RamMetricsController controller;
+        private Mock<IRamMetricsRepository> mockRepository;
+        private Mock<ILogger<RamMetricsController>> mockLogger;
 
         public RamMetricsControllerUnitTests()
         {
-            controller = new RamMetricsController();
+            mockRepository = new Mock<IRamMetricsRepository>();
+            mockLogger = new Mock<ILogger<RamMetricsController>>();
+            controller = new RamMetricsController(mockLogger.Object, mockRepository.Object);
         }
 
         [Fact]
-        public void GetRamAvailableMetrics_ReturnsOk()
+        public void Create_ShouldCall_Create_From_Repository()
         {
-            //Arrange
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
+            mockRepository.Setup(repository => repository.Create(It.IsAny<RamMetric>())).Verifiable();
 
-            //Act
+            var result = controller.Create(new hwAgent.Requests.RamMetricCreateRequest { Time = TimeSpan.FromSeconds(1).ToString(), Value = 50 });
+
+            mockRepository.Verify(repository => repository.Create(It.IsAny<RamMetric>()), Times.AtLeastOnce());
+        }
+
+        [Fact]
+        public void GetRamAvailable_ShouldCall_GetByTimePeriod_From_Repository()
+        {
+            var fromTime = TimeSpan.FromSeconds(32);
+            var toTime = TimeSpan.FromSeconds(35);
+            mockRepository.Setup(repository => repository.GetByTimePeriod(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>())).Verifiable();
+
             var result = controller.GetRamAvailable(fromTime, toTime);
 
-            // Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
+            mockRepository.Verify(repository => repository.GetByTimePeriod(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>()), Times.Once);
+        }
+
+        [Fact]
+        public void GetAll_ShouldCall_GetAll_From_Repository()
+        {
+
+            mockRepository.Setup(repository => repository.GetAll()).Verifiable();
+
+            var result = controller.GetAll();
+
+            mockRepository.Verify();
         }
 
 

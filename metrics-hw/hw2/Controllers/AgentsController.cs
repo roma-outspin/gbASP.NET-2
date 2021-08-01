@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,13 @@ namespace hw2.Controllers
     public class AgentsController : ControllerBase
     {
         private readonly static List<AgentInfo> _registeredAgents = new();
+        private readonly ILogger<AgentsController> _logger;
+
+        public AgentsController(ILogger<AgentsController> logger)
+        {
+            _logger = logger;
+            _logger.LogDebug(1, "NLog встроен в AgentsController");
+        }
 
         [HttpPost("register")]
         public IActionResult RegisterAgent([FromBody] AgentInfo agentInfo)
@@ -19,9 +27,12 @@ namespace hw2.Controllers
             if (!IsAgentRegistered(agentInfo.AgentId))
             {
                 _registeredAgents.Add(agentInfo);
+                _logger.LogInformation($"RegisterAgent ID={agentInfo.AgentId} Url={agentInfo.AgentAddress}");
+
                 return Ok($"Зарегистрировано {agentInfo.AgentId} {agentInfo.AgentAddress}") ;
             } else
             {
+                _logger.LogInformation($"RegisterAgent Error ID={agentInfo.AgentId} Url={agentInfo.AgentAddress} Агент с таким Id уже зарегистрирован");
                 return BadRequest("Агент с таким Id уже зарегистрирован");
             }
             
@@ -30,18 +41,21 @@ namespace hw2.Controllers
         [HttpPut("enable/{agentId}")]
         public IActionResult EnableAgentById([FromRoute] int agentId)
         {
+            _logger.LogInformation($"EnableAgentById ID={agentId}");
             return Ok();
         }
 
         [HttpPut("disable/{agentId}")]
         public IActionResult DisableAgentById([FromRoute] int agentId)
         {
+            _logger.LogInformation($"DisableAgentById ID={agentId}");
             return Ok();
         }
 
         [HttpGet]
         public IActionResult ShowAll()
         {
+            _logger.LogInformation($"ShowAll");
             return Ok(_registeredAgents);
         }
 
