@@ -37,9 +37,12 @@ namespace hwAgent.Controllers
                 Metrics = new List<RamMetricDto>()
             };
 
-            foreach (var metric in metrics)
+            if (metrics != null)
             {
-                response.Metrics.Add(new RamMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                foreach (var metric in metrics)
+                {
+                    response.Metrics.Add(new RamMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                }
             }
             return Ok(response);
         }
@@ -65,12 +68,13 @@ namespace hwAgent.Controllers
             {
                 Metrics = new List<RamMetricDto>()
             };
-
-            foreach (var metric in metrics)
+            if (metrics != null)
             {
-                response.Metrics.Add(new RamMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                foreach (var metric in metrics)
+                {
+                    response.Metrics.Add(new RamMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                }
             }
-
             return Ok(response);
         }
 

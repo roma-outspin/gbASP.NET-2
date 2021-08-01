@@ -2,13 +2,10 @@
 using hwAgent.Models;
 using hwAgent.Requests;
 using hwAgent.Responses;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace hwAgent.Controllers
 {
@@ -36,10 +33,12 @@ namespace hwAgent.Controllers
             {
                 Metrics = new List<DotNetMetricDto>()
             };
-
-            foreach (var metric in metrics)
+            if (metrics != null)
             {
-                response.Metrics.Add(new DotNetMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                foreach (var metric in metrics)
+                {
+                    response.Metrics.Add(new DotNetMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                }
             }
             return Ok(response);
         }
@@ -65,10 +64,12 @@ namespace hwAgent.Controllers
             {
                 Metrics = new List<DotNetMetricDto>()
             };
-
-            foreach (var metric in metrics)
+            if (metrics != null)
             {
-                response.Metrics.Add(new DotNetMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                foreach (var metric in metrics)
+                {
+                    response.Metrics.Add(new DotNetMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                }
             }
 
             return Ok(response);
