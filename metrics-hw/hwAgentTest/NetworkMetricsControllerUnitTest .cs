@@ -6,6 +6,8 @@ using Moq;
 using hwAgent.DAL;
 using hwAgent.Models;
 using Microsoft.Extensions.Logging;
+using AutoMapper;
+using System.Collections.Generic;
 
 namespace hwAgentTest
 {
@@ -14,12 +16,14 @@ namespace hwAgentTest
         private NetworkMetricsController controller;
         private Mock<INetworkMetricsRepository> mockRepository;
         private Mock<ILogger<NetworkMetricsController>> mockLogger;
+        private Mock<IMapper> mockMapper;
 
         public NetworkMetricsControllerUnitTests()
         {
             mockRepository = new Mock<INetworkMetricsRepository>();
             mockLogger = new Mock<ILogger<NetworkMetricsController>>();
-            controller = new NetworkMetricsController(mockLogger.Object, mockRepository.Object);
+            mockMapper = new Mock<IMapper>();
+            controller = new NetworkMetricsController(mockLogger.Object, mockRepository.Object, mockMapper.Object);
         }
 
         [Fact]
@@ -38,7 +42,7 @@ namespace hwAgentTest
             var fromTime = TimeSpan.FromSeconds(32);
             var toTime = TimeSpan.FromSeconds(35);
 
-            mockRepository.Setup(repository => repository.GetByTimePeriod(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>())).Verifiable();
+            mockRepository.Setup(repository => repository.GetByTimePeriod(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>())).Returns(new List<NetworkMetric>());
 
             var result = controller.GetNetworkMetrics(fromTime, toTime);
 
@@ -49,7 +53,7 @@ namespace hwAgentTest
         public void GetAll_ShouldCall_GetAll_From_Repository()
         {
 
-            mockRepository.Setup(repository => repository.GetAll()).Verifiable();
+            mockRepository.Setup(repository => repository.GetAll()).Returns(new List<NetworkMetric>());
 
             var result = controller.GetAll();
 

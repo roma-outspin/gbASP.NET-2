@@ -1,4 +1,5 @@
-﻿using hwAgent.DAL;
+﻿using AutoMapper;
+using hwAgent.DAL;
 using hwAgent.Models;
 using hwAgent.Requests;
 using hwAgent.Responses;
@@ -15,12 +16,15 @@ namespace hwAgent.Controllers
     {
         private readonly ILogger<DotNetMetricsController> _logger;
         private IDotNetMetricsRepository repository;
+        private IMapper mapper;
 
-        public DotNetMetricsController(ILogger<DotNetMetricsController> logger, IDotNetMetricsRepository repository)
+
+        public DotNetMetricsController(ILogger<DotNetMetricsController> logger, IDotNetMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в DotNetMetricsController-Agent");
             this.repository = repository;
+            this.mapper = mapper;
         }
 
         [HttpGet("errors-count/from/{fromTime}/to/{toTime}")]
@@ -33,13 +37,12 @@ namespace hwAgent.Controllers
             {
                 Metrics = new List<DotNetMetricDto>()
             };
-            if (metrics != null)
-            {
+
                 foreach (var metric in metrics)
                 {
-                    response.Metrics.Add(new DotNetMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                    response.Metrics.Add(mapper.Map<DotNetMetricDto>(metric));
                 }
-            }
+
             return Ok(response);
         }
 
@@ -64,13 +67,12 @@ namespace hwAgent.Controllers
             {
                 Metrics = new List<DotNetMetricDto>()
             };
-            if (metrics != null)
-            {
+
                 foreach (var metric in metrics)
                 {
-                    response.Metrics.Add(new DotNetMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                    response.Metrics.Add(mapper.Map<DotNetMetricDto>(metric));
                 }
-            }
+
 
             return Ok(response);
         }

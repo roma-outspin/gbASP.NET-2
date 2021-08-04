@@ -1,14 +1,12 @@
-﻿using hwAgent.DAL;
+﻿using AutoMapper;
+using hwAgent.DAL;
 using hwAgent.Models;
 using hwAgent.Requests;
 using hwAgent.Responses;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace hwAgent.Controllers
 {
@@ -18,12 +16,14 @@ namespace hwAgent.Controllers
     {
         private readonly ILogger<CpuMetricsController> _logger;
         private ICpuMetricsRepository repository;
+        private readonly IMapper mapper;
 
-        public CpuMetricsController(ILogger<CpuMetricsController> logger, ICpuMetricsRepository repository)
+        public CpuMetricsController(ILogger<CpuMetricsController> logger, ICpuMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в CpuMetricsController-Agent");
             this.repository = repository;
+            this.mapper = mapper;
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
@@ -38,13 +38,11 @@ namespace hwAgent.Controllers
                 Metrics = new List<CpuMetricDto>()
             };
 
-            if (metrics != null)
+            foreach (var metric in metrics)
             {
-                foreach (var metric in metrics)
-                {
-                    response.Metrics.Add(new CpuMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
-                }
+                response.Metrics.Add(mapper.Map<CpuMetricDto>(metric));
             }
+            
 
             return Ok(response);
 
@@ -65,22 +63,20 @@ namespace hwAgent.Controllers
         [HttpGet("all")]
         public IActionResult GetAll()
         {
-            var metrics = repository.GetAll();
+            IList<CpuMetric> metrics = repository.GetAll();
 
             var response = new AllCpuMetricsResponse()
             {
                 Metrics = new List<CpuMetricDto>()
             };
-            if (metrics!=null)
+
+            foreach (var metric in metrics)
             {
-                foreach (var metric in metrics)
-                {
-                    response.Metrics.Add(new CpuMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
-                }
+                response.Metrics.Add(mapper.Map<CpuMetricDto>(metric));
             }
 
-
             return Ok(response);
+
         }
     }
 }

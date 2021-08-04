@@ -1,4 +1,5 @@
-﻿using hwAgent.DAL;
+﻿using AutoMapper;
+using hwAgent.DAL;
 using hwAgent.Models;
 using hwAgent.Requests;
 using hwAgent.Responses;
@@ -15,12 +16,14 @@ namespace hwAgent.Controllers
     {
         private readonly ILogger<HddMetricsController> _logger;
         private IHddMetricsRepository repository;
+        private IMapper mapper;
 
-        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository repository)
+        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в HddMetricsController-Agent");
             this.repository = repository;
+            this.mapper = mapper;
         }
         [HttpGet("left/from/{fromTime}/to/{toTime}")]
         public IActionResult GetHddLeft(TimeSpan fromTime, TimeSpan toTime)
@@ -32,13 +35,12 @@ namespace hwAgent.Controllers
             {
                 Metrics = new List<HddMetricDto>()
             };
-            if (metrics != null)
+
+            foreach (var metric in metrics)
             {
-                foreach (var metric in metrics)
-                {
-                    response.Metrics.Add(new HddMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
-                }
+                response.Metrics.Add(mapper.Map<HddMetricDto>(metric));
             }
+
             return Ok(response);
         }
 
@@ -63,13 +65,12 @@ namespace hwAgent.Controllers
             {
                 Metrics = new List<HddMetricDto>()
             };
-            if (metrics != null)
+
+            foreach (var metric in metrics)
             {
-                foreach (var metric in metrics)
-                {
-                    response.Metrics.Add(new HddMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
-                }
+                response.Metrics.Add(mapper.Map<HddMetricDto>(metric));
             }
+
             return Ok(response);
         }
     }

@@ -1,3 +1,4 @@
+using AutoMapper;
 using hwAgent.DAL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,6 +43,10 @@ namespace hwAgent
             services.AddScoped<INetworkMetricsRepository, NetworkMetricsRepository>();
             services.AddScoped<IRamMetricsRepository, RamMetricsRepository>();
 
+            var mapperConfiguration = new MapperConfiguration(mp => mp.AddProfile(new MapperProfile()));
+            var mapper = mapperConfiguration.CreateMapper();
+            services.AddSingleton(mapper);
+
         }
 
         private void ConfigureSqlLiteConnection(IServiceCollection services)
@@ -71,19 +76,19 @@ namespace hwAgent
                 command.ExecuteNonQuery();
 
                 command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER PRIMARY KEY,
-                    value INT, time INT)";
+                    value INT, time LONG)";
                 command.ExecuteNonQuery();
                 command.CommandText = @"CREATE TABLE dotnetmetrics(id INTEGER PRIMARY KEY,
-                    value INT, time INT)";
+                    value INT, time LONG)";
                 command.ExecuteNonQuery();
                 command.CommandText = @"CREATE TABLE hddmetrics(id INTEGER PRIMARY KEY,
-                    value INT, time INT)";
+                    value INT, time LONG)";
                 command.ExecuteNonQuery();
                 command.CommandText = @"CREATE TABLE networkmetrics(id INTEGER PRIMARY KEY,
-                    value INT, time INT)";
+                    value INT, time LONG)";
                 command.ExecuteNonQuery();
                 command.CommandText = @"CREATE TABLE rammetrics(id INTEGER PRIMARY KEY,
-                    value INT, time INT)";
+                    value INT, time LONG)";
                 command.ExecuteNonQuery();
 
                 for (int i = 30; i < 40; i++)
