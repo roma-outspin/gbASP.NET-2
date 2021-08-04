@@ -1,4 +1,5 @@
-﻿using hwAgent.DAL;
+﻿using AutoMapper;
+using hwAgent.DAL;
 using hwAgent.Models;
 using hwAgent.Requests;
 using hwAgent.Responses;
@@ -18,8 +19,9 @@ namespace hwAgent.Controllers
     {
         private readonly ILogger<RamMetricsController> _logger;
         private IRamMetricsRepository repository;
+        private IMapper mapper;
 
-        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository)
+        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в RamMetricsController-Agent");
@@ -37,13 +39,12 @@ namespace hwAgent.Controllers
                 Metrics = new List<RamMetricDto>()
             };
 
-            if (metrics != null)
-            {
+
                 foreach (var metric in metrics)
                 {
-                    response.Metrics.Add(new RamMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                    response.Metrics.Add(mapper.Map<RamMetricDto>(metric));
                 }
-            }
+
             return Ok(response);
         }
 
@@ -68,13 +69,12 @@ namespace hwAgent.Controllers
             {
                 Metrics = new List<RamMetricDto>()
             };
-            if (metrics != null)
-            {
+
                 foreach (var metric in metrics)
                 {
-                    response.Metrics.Add(new RamMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                    response.Metrics.Add(mapper.Map<RamMetricDto>(metric));
                 }
-            }
+
             return Ok(response);
         }
 

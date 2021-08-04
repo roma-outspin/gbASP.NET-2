@@ -1,14 +1,12 @@
-﻿using hwAgent.DAL;
+﻿using AutoMapper;
+using hwAgent.DAL;
 using hwAgent.Models;
 using hwAgent.Requests;
 using hwAgent.Responses;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace hwAgent.Controllers
 {
@@ -18,8 +16,9 @@ namespace hwAgent.Controllers
     {
         private readonly ILogger<NetworkMetricsController> _logger;
         private INetworkMetricsRepository repository;
+        private IMapper mapper;
 
-        public NetworkMetricsController(ILogger<NetworkMetricsController> logger, INetworkMetricsRepository repository)
+        public NetworkMetricsController(ILogger<NetworkMetricsController> logger, INetworkMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в NetworkMetricsController-Agent");
@@ -36,13 +35,12 @@ namespace hwAgent.Controllers
             {
                 Metrics = new List<NetworkMetricDto>()
             };
-            if (metrics != null)
+
+            foreach (var metric in metrics)
             {
-                foreach (var metric in metrics)
-                {
-                    response.Metrics.Add(new NetworkMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
-                }
+                response.Metrics.Add(mapper.Map<NetworkMetricDto>(metric));
             }
+
             return Ok(response);
         }
 
@@ -67,13 +65,15 @@ namespace hwAgent.Controllers
             {
                 Metrics = new List<NetworkMetricDto>()
             };
+
             if (metrics != null)
             {
                 foreach (var metric in metrics)
                 {
-                    response.Metrics.Add(new NetworkMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                    response.Metrics.Add(mapper.Map<NetworkMetricDto>(metric));
                 }
             }
+
             return Ok(response);
         }
     }

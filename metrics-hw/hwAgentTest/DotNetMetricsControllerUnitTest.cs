@@ -1,9 +1,11 @@
+using AutoMapper;
 using hwAgent.Controllers;
 using hwAgent.DAL;
 using hwAgent.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace hwAgentTest
@@ -13,12 +15,14 @@ namespace hwAgentTest
         private DotNetMetricsController controller;
         private Mock<IDotNetMetricsRepository> mockRepository;
         private Mock<ILogger<DotNetMetricsController>> mockLogger;
+        private Mock<IMapper> mockMapper;
 
         public DotNetMetricsControllerUnitTests()
         {
             mockRepository = new Mock<IDotNetMetricsRepository>();
             mockLogger = new Mock<ILogger<DotNetMetricsController>>();
-            controller = new DotNetMetricsController(mockLogger.Object, mockRepository.Object);
+            mockMapper = new Mock<IMapper>();
+            controller = new DotNetMetricsController(mockLogger.Object, mockRepository.Object, mockMapper.Object);
         }
 
         [Fact]
@@ -37,7 +41,7 @@ namespace hwAgentTest
             var fromTime = TimeSpan.FromSeconds(32);
             var toTime = TimeSpan.FromSeconds(35);
 
-            mockRepository.Setup(repository => repository.GetByTimePeriod(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>())).Verifiable();
+            mockRepository.Setup(repository => repository.GetByTimePeriod(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>())).Returns(new List<DotNetMetric>());
 
             var result = controller.GetErrorsCount(fromTime, toTime);
 
@@ -48,7 +52,7 @@ namespace hwAgentTest
         public void GetAll_ShouldCall_GetAll_From_Repository()
         {
 
-            mockRepository.Setup(repository => repository.GetAll()).Verifiable();
+            mockRepository.Setup(repository => repository.GetAll()).Returns(new List<DotNetMetric>());
 
             var result = controller.GetAll();
 

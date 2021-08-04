@@ -7,6 +7,7 @@ using hwAgent.DAL;
 using hwAgent.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using AutoMapper;
 
 namespace hwAgentTest
 {
@@ -15,12 +16,14 @@ namespace hwAgentTest
         private CpuMetricsController controller;
         private Mock<ICpuMetricsRepository> mockRepository;
         private Mock<ILogger<CpuMetricsController>> mockLogger;
+        private Mock<IMapper> mockMapper;
 
         public CpuMetricsControllerUnitTests()
         {
             mockRepository = new Mock<ICpuMetricsRepository>();
             mockLogger = new Mock<ILogger<CpuMetricsController>>();
-            controller = new CpuMetricsController(mockLogger.Object, mockRepository.Object);
+            mockMapper = new Mock<IMapper>();
+            controller = new CpuMetricsController(mockLogger.Object, mockRepository.Object, mockMapper.Object);
         }
 
         [Fact]
@@ -39,7 +42,7 @@ namespace hwAgentTest
             var fromTime = TimeSpan.FromSeconds(32);
             var toTime = TimeSpan.FromSeconds(35);
 
-            mockRepository.Setup(repository =>repository.GetByTimePeriod(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>())).Verifiable();
+            mockRepository.Setup(repository =>repository.GetByTimePeriod(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>())).Returns(new List<CpuMetric>());
 
             var result = controller.GetCpuMetrics(fromTime, toTime);
 
@@ -50,7 +53,7 @@ namespace hwAgentTest
         public void GetAll_ShouldCall_GetAll_From_Repository()
         {
 
-            mockRepository.Setup(repository => repository.GetAll()).Verifiable();
+            mockRepository.Setup(repository => repository.GetAll()).Returns(new List<CpuMetric>());
 
             var result = controller.GetAll();
 

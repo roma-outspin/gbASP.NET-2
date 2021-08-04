@@ -6,6 +6,8 @@ using Moq;
 using hwAgent.DAL;
 using hwAgent.Models;
 using Microsoft.Extensions.Logging;
+using AutoMapper;
+using System.Collections.Generic;
 
 namespace hwAgentTest
 {
@@ -14,12 +16,14 @@ namespace hwAgentTest
         private HddMetricsController controller;
         private Mock<IHddMetricsRepository> mockRepository;
         private Mock<ILogger<HddMetricsController>> mockLogger;
+        private Mock<IMapper> mockMapper;
 
         public HddMetricsControllerUnitTests()
         {
             mockRepository = new Mock<IHddMetricsRepository>();
             mockLogger = new Mock<ILogger<HddMetricsController>>();
-            controller = new HddMetricsController(mockLogger.Object, mockRepository.Object);
+            mockMapper = new Mock<IMapper>();
+            controller = new HddMetricsController(mockLogger.Object, mockRepository.Object, mockMapper.Object);
         }
 
         [Fact]
@@ -38,7 +42,7 @@ namespace hwAgentTest
             var fromTime = TimeSpan.FromSeconds(32);
             var toTime = TimeSpan.FromSeconds(35);
 
-            mockRepository.Setup(repository => repository.GetByTimePeriod(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>())).Verifiable();
+            mockRepository.Setup(repository => repository.GetByTimePeriod(It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>())).Returns(new List<HddMetric>());
 
             var result = controller.GetHddLeft(fromTime, toTime);
 
@@ -49,7 +53,7 @@ namespace hwAgentTest
         public void GetAll_ShouldCall_GetAll_From_Repository()
         {
 
-            mockRepository.Setup(repository => repository.GetAll()).Verifiable();
+            mockRepository.Setup(repository => repository.GetAll()).Returns(new List<HddMetric>());
 
             var result = controller.GetAll();
 
