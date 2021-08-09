@@ -46,6 +46,7 @@ namespace hwAgent
                 logging.ClearProviders(); // создание провайдеров логирования
                 logging.SetMinimumLevel(LogLevel.Trace); // устанавливаем минимальный уровень логирования
             }).UseNLog(); // добавляем библиотеку nlog
-
+           // .ConfigureAppConfiguration(conf =>
+           //conf.AddJsonFile("appsettings.json"));
     }
 }

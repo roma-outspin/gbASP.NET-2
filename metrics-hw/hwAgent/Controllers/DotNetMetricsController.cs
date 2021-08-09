@@ -49,11 +49,9 @@ namespace hwAgent.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] DotNetMetricCreateRequest request)
         {
-            repository.Create(new DotNetMetric
-            {
-                Time = TimeSpan.Parse(request.Time),
-                Value = request.Value
-            });
+            _logger.LogInformation($"Try to create DotNetMetric with Time={request.Time}, Value={request.Value}");
+
+            repository.Create(mapper.Map<DotNetMetric>(request));
 
             return Ok();
         }
@@ -61,6 +59,7 @@ namespace hwAgent.Controllers
         [HttpGet("all")]
         public IActionResult GetAll()
         {
+            _logger.LogInformation($"Был вызван метод Getall()");
             var metrics = repository.GetAll();
 
             var response = new AllDotNetMetricsResponse()

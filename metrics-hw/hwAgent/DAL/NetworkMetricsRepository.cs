@@ -5,17 +5,19 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Microsoft.Extensions.Configuration;
 
 namespace hwAgent.DAL
 {
     public class NetworkMetricsRepository : INetworkMetricsRepository
     {
-        private const string ConnectionString = "Data Source=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
+        private string ConnectionString;// = "Data Source=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
             // инжектируем соединение с базой данных в наш репозиторий через конструктор
 
-        public NetworkMetricsRepository()
+        public NetworkMetricsRepository(IConfiguration configuration)
         {
             SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            ConnectionString = configuration.GetConnectionString("MetricsDatabase");
         }
 
         public void Create(NetworkMetric item)
