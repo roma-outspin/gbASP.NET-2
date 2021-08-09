@@ -23,6 +23,7 @@ namespace hwAgent.Controllers
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в NetworkMetricsController-Agent");
             this.repository = repository;
+            this.mapper = mapper;
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
@@ -47,11 +48,8 @@ namespace hwAgent.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] NetworkMetricCreateRequest request)
         {
-            repository.Create(new NetworkMetric
-            {
-                Time = TimeSpan.Parse(request.Time),
-                Value = request.Value
-            });
+            _logger.LogInformation($"Try to create NetworkMetric with Time={request.Time}, Value={request.Value}");
+            repository.Create(mapper.Map<NetworkMetric>(request));
 
             return Ok();
         }
@@ -59,6 +57,7 @@ namespace hwAgent.Controllers
         [HttpGet("all")]
         public IActionResult GetAll()
         {
+            _logger.LogInformation($"Был вызван метод Getall()");
             var metrics = repository.GetAll();
 
             var response = new AllNetworkMetricsResponse()
@@ -66,13 +65,12 @@ namespace hwAgent.Controllers
                 Metrics = new List<NetworkMetricDto>()
             };
 
-            if (metrics != null)
-            {
+
                 foreach (var metric in metrics)
                 {
                     response.Metrics.Add(mapper.Map<NetworkMetricDto>(metric));
                 }
-            }
+
 
             return Ok(response);
         }

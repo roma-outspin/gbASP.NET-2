@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using hwAgent.Models;
+using hwAgent.Requests;
 using hwAgent.Responses;
 
 namespace hwAgent
@@ -13,6 +14,11 @@ namespace hwAgent
             CreateMap<HddMetric, HddMetricDto>();
             CreateMap<NetworkMetric, NetworkMetricDto>();
             CreateMap<RamMetric, RamMetricDto>();
+            CreateMap<CpuMetricCreateRequest, CpuMetric>();
+            CreateMap<DotNetMetricCreateRequest, DotNetMetric>();
+            CreateMap<HddMetricCreateRequest, HddMetric>();
+            CreateMap<NetworkMetricCreateRequest, NetworkMetric>();
+            CreateMap<RamMetricCreateRequest, RamMetric>();
         }
     }
 }

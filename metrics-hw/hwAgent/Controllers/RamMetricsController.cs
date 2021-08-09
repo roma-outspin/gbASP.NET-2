@@ -26,6 +26,7 @@ namespace hwAgent.Controllers
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в RamMetricsController-Agent");
             this.repository = repository;
+            this.mapper = mapper;
         }
 
         [HttpGet("available/from/{fromTime}/to/{toTime}")]
@@ -51,11 +52,8 @@ namespace hwAgent.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] RamMetricCreateRequest request)
         {
-            repository.Create(new RamMetric
-            {
-                Time = TimeSpan.Parse(request.Time),
-                Value = request.Value
-            });
+            _logger.LogInformation($"Try to create RamMetric with Time={request.Time}, Value={request.Value}");
+            repository.Create(mapper.Map<RamMetric>(request));
 
             return Ok();
         }
@@ -63,6 +61,7 @@ namespace hwAgent.Controllers
         [HttpGet("all")]
         public IActionResult GetAll()
         {
+            _logger.LogInformation($"Был вызван метод Getall()");
             var metrics = repository.GetAll();
 
             var response = new AllRamMetricsResponse()

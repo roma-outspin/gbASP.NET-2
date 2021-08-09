@@ -4,6 +4,7 @@ using hwAgent.Models;
 using hwAgent.Requests;
 using hwAgent.Responses;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace hwAgent.Controllers
         public IActionResult GetCpuMetrics(TimeSpan fromTime, TimeSpan toTime)
         {
             _logger.LogInformation($"GetCpuMetrics fromTime={fromTime} toTime={toTime}");
-
+           
             var metrics = repository.GetByTimePeriod(fromTime, toTime);
 
             var response = new AllCpuMetricsResponse()
@@ -51,11 +52,8 @@ namespace hwAgent.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] CpuMetricCreateRequest request)
         {
-            repository.Create(new CpuMetric
-            {
-                Time = TimeSpan.Parse(request.Time),
-                Value = request.Value
-            });
+            _logger.LogInformation($"Try to create CpuMetric with Time={request.Time}, Value={request.Value}");
+            repository.Create(mapper.Map<CpuMetric>(request));
 
             return Ok();
         }
@@ -63,6 +61,7 @@ namespace hwAgent.Controllers
         [HttpGet("all")]
         public IActionResult GetAll()
         {
+            _logger.LogInformation($"Был вызван метод Getall()");
             IList<CpuMetric> metrics = repository.GetAll();
 
             var response = new AllCpuMetricsResponse()

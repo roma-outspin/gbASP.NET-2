@@ -47,18 +47,17 @@ namespace hwAgent.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] HddMetricCreateRequest request)
         {
-            repository.Create(new HddMetric
-            {
-                Time = TimeSpan.Parse(request.Time),
-                Value = request.Value
-            });
+            _logger.LogInformation($"Try to create HddMetric with Time={request.Time}, Value={request.Value}");
+            repository.Create(mapper.Map<HddMetric>(request));
 
             return Ok();
         }
 
         [HttpGet("all")]
-        public IActionResult GetAll()
-        {
+        public IActionResult GetAll() { 
+
+
+            _logger.LogInformation($"Был вызван метод Getall()");
             var metrics = repository.GetAll();
 
             var response = new AllHddMetricsResponse()

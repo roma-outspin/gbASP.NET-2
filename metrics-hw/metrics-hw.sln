@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetricsManagerTests", "Metr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hwAgentTest", "hwAgentTest\hwAgentTest.csproj", "{480326FA-7477-48E8-BC78-9BEF632773A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{E3644652-EE75-421C-B813-44194AD51D73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{E3644652-EE75-421C-B813-44194AD51D73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

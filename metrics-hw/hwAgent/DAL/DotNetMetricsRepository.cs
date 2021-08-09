@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using hwAgent.Models;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -10,12 +11,13 @@ namespace hwAgent.DAL
 {
     public class DotNetMetricsRepository : IDotNetMetricsRepository
     {
-        private const string ConnectionString = "Data Source=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
+        private string ConnectionString;// = "Data Source=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
             // инжектируем соединение с базой данных в наш репозиторий через конструктор
 
-        public DotNetMetricsRepository()
+        public DotNetMetricsRepository(IConfiguration configuration)
         {
             SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            ConnectionString = configuration.GetConnectionString("MetricsDatabase");
         }
 
         public void Create(DotNetMetric item)
